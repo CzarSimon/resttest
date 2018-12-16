@@ -2,7 +2,7 @@
 from typing import Dict
 
 # Internal modules
-from models import TestCase, Request, Env
+from models import TestCase, Request, Response, Env
 
 # 3rd party modules
 import requests
@@ -22,19 +22,21 @@ def _make_path(req: Request, env: Env) -> str:
     return path
 
 
-def _make_request_without_body(req: Request, env: Env) -> requests.Response:
+def _make_request_without_body(req: Request, env: Env) -> Response:
     url = _make_path(req, env)
     headers = _make_headers(env, req.useToken)
-    return requests.request(req.method, url, headers=headers)
+    resp = requests.request(req.method, url, headers=headers)
+    return _map_response(resp)
 
 
-def _make_request_with_body(req: Request, env: Env) -> requests.Response:
+def _make_request_with_body(req: Request, env: Env) -> Response:
     if not req.body:
         return _make_request_without_body(req, env)
     url = _make_path(req, env)
     headers = _make_headers(env, req.useToken)
     body = _resolve_body(env, req.body)
-    return requests.request(req.method, url, json=body, headers=headers)
+    resp = requests.request(req.method, url, json=body, headers=headers)
+    return _map_response(resp)
 
 
 def _make_headers(env: Env, with_token: bool) -> Dict[str, str]:
@@ -64,3 +66,8 @@ def _resolve_value(env: Env, val: str) -> str:
     if key == val:
         return val
     return env.data[key]
+
+
+def _map_response(resp: requests.Response) -> Response:
+    return Response(status=resp.status_code, body=resp.json())
+
