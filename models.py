@@ -9,8 +9,9 @@ class Env:
     data: Dict[str, str]
 
     @classmethod
-    def fromdict(cls, raw: Dict[str, Any]) -> "cls":
-        return cls(base_url=raw["baseUrl"], data=raw["data"])
+    def fromdict(cls, port: int, raw: Dict[str, Any]) -> "cls":
+        base_url = raw["baseUrl"] if "baseUrl" in raw else f"http://127.0.0.1:{port}"
+        return cls(base_url=base_url, data=raw["data"])
 
 
 @dataclass(frozen=True)
