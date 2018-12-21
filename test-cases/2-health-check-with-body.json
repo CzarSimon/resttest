@@ -1,0 +1,14 @@
+{
+    "name": "check-service-health-with-body",
+    "request": {
+        "method": "GET",
+        "path": "/health",
+        "useToken": false
+    },
+    "response": {
+        "status": 200,
+        "body": {
+            "status": "OK"
+        }
+    }
+}
