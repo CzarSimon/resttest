@@ -25,7 +25,7 @@ class Request:
     def fromdict(cls, raw: Dict[str, Any]) -> "cls":
         return cls(
             method=raw["method"],
-            path=raw["raw"],
+            path=raw["path"],
             body=raw["body"] if "body" in raw else None,
             use_token=raw["useToken"],
         )
@@ -38,7 +38,7 @@ class Response:
 
     @classmethod
     def fromdict(cls, raw: Dict[str, Any]) -> "cls":
-        return cls(method=raw["status"], body=raw["body"] if "body" in raw else None)
+        return cls(status=raw["status"], body=raw["body"] if "body" in raw else None)
 
 
 @dataclass(frozen=True)

@@ -6,7 +6,7 @@ from os.path import join, isfile
 from typing import Any, Dict, List
 
 # Internal modules
-from models import Env, TestCase
+from resttest.models import Env, TestCase
 
 
 class Reader(metaclass=ABCMeta):
@@ -51,9 +51,10 @@ class FileReader(Reader):
         return name + ".json"
 
     def _get_test_case_names(self) -> List[str]:
-        return [
+        unsorted_names = [
             fname
             for fname in listdir(self.test_dir)
             if isfile(join(self.test_dir, fname)) and fname != "env.json"
         ]
+        return sorted(unsorted_names)
 

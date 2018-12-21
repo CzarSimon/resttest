@@ -2,7 +2,7 @@
 from typing import Dict
 
 # Internal modules
-from models import TestCase, Request, Response, Env
+from resttest.models import TestCase, Request, Response, Env
 
 # 3rd party modules
 import requests

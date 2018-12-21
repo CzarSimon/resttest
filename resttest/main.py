@@ -2,9 +2,9 @@
 import fire
 
 # Internal modules
-from service import Reader
-from service import get_random_port
-from service import run_tests
+from resttest.service import Reader
+from resttest.service import get_random_port
+from resttest.service import run_tests
 
 
 class RestTest:
@@ -18,6 +18,9 @@ class RestTest:
         r = Reader("./test-cases")
         env = r.read_env(port)
         test_cases = r.read_test_cases()
+        for tc in test_cases:
+            print(tc)
+        return
         run_tests(test_cases, env)
 
     def get_port(self) -> None:
@@ -25,6 +28,10 @@ class RestTest:
         print(get_random_port())
 
 
-if __name__ == "__main__":
+def main() -> None:
     fire.Fire(RestTest)
+
+
+if __name__ == "__main__":
+    main()
 

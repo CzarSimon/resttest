@@ -4,7 +4,7 @@ from typing import Dict, List
 
 # Internal modules
 from .rpc_service import make_request
-from models import Env, EnvUpdate, TestCase, Response
+from resttest.models import Env, EnvUpdate, TestCase, Response
 
 
 def run_tests(test_cases: List[TestCase], env: Env) -> None:
