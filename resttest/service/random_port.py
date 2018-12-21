@@ -1,5 +1,6 @@
 # Standard library
 import socket
+import sys
 
 
 def get_random_port() -> int:
@@ -12,6 +13,7 @@ def get_random_port() -> int:
         return port
     except Exception as e:
         print(f"Failed to get unused port{e}")
+        sys.exit(1)
 
 
 def _find_unused_port() -> int:

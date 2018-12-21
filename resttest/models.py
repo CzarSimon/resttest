@@ -6,12 +6,13 @@ from dataclasses import dataclass
 @dataclass
 class Env:
     base_url: str
-    data: Dict[str, str]
+    data: Dict[str, Any]
 
     @classmethod
-    def fromdict(cls, port: int, raw: Dict[str, Any]) -> "cls":
+    def fromdict(cls, port: int, raw: Dict[str, Any]) -> "Env":
         base_url = raw["baseUrl"] if "baseUrl" in raw else f"http://127.0.0.1:{port}"
-        return cls(base_url=base_url, data=raw["data"])
+        env_data = raw["data"] if "data" in raw else {}
+        return cls(base_url=base_url, data=env_data)
 
 
 @dataclass(frozen=True)
@@ -22,7 +23,7 @@ class Request:
     use_token: bool
 
     @classmethod
-    def fromdict(cls, raw: Dict[str, Any]) -> "cls":
+    def fromdict(cls, raw: Dict[str, Any]) -> "Request":
         return cls(
             method=raw["method"],
             path=raw["path"],
@@ -37,7 +38,7 @@ class Response:
     body: Optional[Dict[str, Any]]
 
     @classmethod
-    def fromdict(cls, raw: Dict[str, Any]) -> "cls":
+    def fromdict(cls, raw: Dict[str, Any]) -> "Response":
         return cls(status=raw["status"], body=raw["body"] if "body" in raw else None)
 
 
@@ -47,7 +48,7 @@ class EnvUpdate:
     response_key: str
 
     @classmethod
-    def fromdict(cls, raw: Dict[str, Any]) -> "cls":
+    def fromdict(cls, raw: Dict[str, Any]) -> "EnvUpdate":
         return cls(env_key=raw["env_key"], response_key=raw["response_key"])
 
 
@@ -59,7 +60,7 @@ class TestCase:
     set_env: List[EnvUpdate]
 
     @classmethod
-    def fromdict(cls, raw: Dict[str, Any]) -> "cls":
+    def fromdict(cls, raw: Dict[str, Any]) -> "TestCase":
         updates: List[EnvUpdate] = []
         if "setEnv" in raw:
             updates = [EnvUpdate.fromdict(u) for u in raw["setEnv"]]
