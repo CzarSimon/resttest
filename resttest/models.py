@@ -49,7 +49,7 @@ class EnvUpdate:
 
     @classmethod
     def fromdict(cls, raw: Dict[str, Any]) -> "EnvUpdate":
-        return cls(env_key=raw["env_key"], response_key=raw["response_key"])
+        return cls(env_key=raw["envKey"], response_key=raw["responseKey"])
 
 
 @dataclass(frozen=True)

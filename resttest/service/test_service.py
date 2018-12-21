@@ -1,5 +1,6 @@
 # Standard library
 import sys
+from datetime import datetime
 from typing import Any, Dict, List
 
 # Internal modules
@@ -8,9 +9,11 @@ from resttest.models import Env, EnvUpdate, TestCase, Response
 
 
 def run_tests(test_cases: List[TestCase], env: Env) -> None:
+    start_time = datetime.now()
     for i, tc in enumerate(test_cases):
         _run_test(i + 1, tc, env)
-    print("Great success")
+    print("Great success!")
+    _log_test_time(start_time)
 
 
 def _run_test(number: int, test_case: TestCase, env: Env) -> None:
@@ -68,3 +71,8 @@ def _update_env(
 def _fail(test_case: TestCase, msg: str) -> None:
     print(f"FAILED: {test_case.name} {msg}\n")
     sys.exit(1)
+
+
+def _log_test_time(start_time: datetime) -> None:
+    elapsed_time = (datetime.now() - start_time).microseconds / 1e6
+    print(f"Test took: {elapsed_time} s.")
