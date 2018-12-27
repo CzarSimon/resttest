@@ -4,9 +4,13 @@ from abc import ABCMeta, abstractmethod
 from os import listdir
 from os.path import join, isfile
 from typing import Any, Dict, List
+from collections import namedtuple
 
 # Internal modules
 from resttest.models import Env, TestCase
+
+
+NumberedFilename = namedtuple("NumberedFilename", ["number", "name"])
 
 
 class Reader(metaclass=ABCMeta):
@@ -56,5 +60,15 @@ class FileReader(Reader):
             for fname in listdir(self.test_dir)
             if isfile(join(self.test_dir, fname)) and fname != "env.json"
         ]
-        return sorted(unsorted_names)
+        return self._sort_filenames(unsorted_names)
 
+    def _sort_filenames(self, filenames: List[str]) -> List[str]:
+        numbered = self._number_filenames(filenames)
+        sorted_names = sorted(numbered, key=lambda nf: nf.number)
+        return [nf.name for nf in sorted_names]
+
+    def _number_filenames(self, filenames: List[str]) -> List[NumberedFilename]:
+        return [
+            NumberedFilename(number=int(fname.split("-")[0]), name=fname)
+            for fname in filenames
+        ]

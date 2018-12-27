@@ -1,0 +1,11 @@
+{
+    "name": "check service health after suite",
+    "request": {
+        "method": "GET",
+        "path": "/health",
+        "useToken": false
+    },
+    "response": {
+        "status": 200
+    }
+}
