@@ -20,15 +20,15 @@ class Request:
     method: str
     path: str
     body: Optional[Dict[str, Any]]
-    use_token: bool
+    headers: Dict[str, str]
 
     @classmethod
     def fromdict(cls, raw: Dict[str, Any]) -> "Request":
         return cls(
             method=raw["method"],
             path=raw["path"],
-            body=raw["body"] if "body" in raw else None,
-            use_token=raw["useToken"],
+            body=raw.get("body", None),
+            headers=raw.get("headers", {}),
         )
 
 

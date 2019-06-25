@@ -1,8 +1,11 @@
 # Standard library
+import re
+from functools import reduce
 from typing import Dict
 
 # Internal modules
 from resttest.models import TestCase, Request, Response, Env
+from .template_util import resolve_dict, resolve_value
 
 # 3rd party modules
 import requests
@@ -24,7 +27,7 @@ def _make_path(req: Request, env: Env) -> str:
 
 def _make_request_without_body(req: Request, env: Env) -> Response:
     url = _make_path(req, env)
-    headers = _make_headers(env, req.use_token)
+    headers = _make_headers(env, req)
     resp = requests.request(req.method, url, headers=headers)
     return _map_response(resp)
 
@@ -33,39 +36,17 @@ def _make_request_with_body(req: Request, env: Env) -> Response:
     if not req.body:
         return _make_request_without_body(req, env)
     url = _make_path(req, env)
-    headers = _make_headers(env, req.use_token)
-    body = _resolve_body(env, req.body)
+    headers = _make_headers(env, req)
+    body = resolve_dict(env, req.body)
     resp = requests.request(req.method, url, json=body, headers=headers)
     return _map_response(resp)
 
 
-def _make_headers(env: Env, with_token: bool) -> Dict[str, str]:
-    base_headers = {
-        "Content-Type": "application/json",
-        "X-Client-ID": env.data["clientId"],
-    }
-    if with_token:
-        base_headers["Authorization"] = f'Bearer {env.data["authToken"]}'
-    return base_headers
-
-
-def _resolve_body(env: Env, body: Dict) -> Dict:
-    final_body: Dict = {}
-    for key, val in body.items():
-        if isinstance(val, str):
-            final_body[key] = _resolve_value(env, val)
-        elif isinstance(val, dict):
-            final_body[key] = _resolve_body(env, val)
-        else:
-            final_body[key] = val
-    return final_body
-
-
-def _resolve_value(env: Env, val: str) -> str:
-    key = val.replace("${", "").replace("}", "")
-    if key == val:
-        return val
-    return env.data[key]
+def _make_headers(env: Env, req: Request) -> Dict[str, str]:
+    headers = {"Content-Type": "application/json", "X-Client-ID": env.data["clientId"]}
+    for key, val in req.headers.items():
+        headers[key] = resolve_value(env, val)
+    return headers
 
 
 def _map_response(resp: requests.Response) -> Response:
